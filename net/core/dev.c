@@ -1829,12 +1829,10 @@ static inline void net_timestamp_set(struct sk_buff *skb)
 			__net_timestamp(SKB);		\
 	}						\
 
-bool is_skb_forwardable(const struct net_device *dev, const struct sk_buff *skb)
+static inline bool skb_mac_len_fits_dev(const struct net_device *dev,
+					const struct sk_buff *skb)
 {
 	unsigned int len;
-
-	if (!(dev->flags & IFF_UP))
-		return false;
 
 	len = dev->mtu + dev->hard_header_len + VLAN_HLEN;
 	if (skb->len <= len)
@@ -1848,6 +1846,14 @@ bool is_skb_forwardable(const struct net_device *dev, const struct sk_buff *skb)
 		return skb_gso_validate_mac_len(skb, len);
 
 	return false;
+}
+
+bool is_skb_forwardable(const struct net_device *dev, const struct sk_buff *skb)
+{
+	if (!(dev->flags & IFF_UP))
+		return false;
+
+	return skb_mac_len_fits_dev(dev, skb);
 }
 EXPORT_SYMBOL_GPL(is_skb_forwardable);
 
@@ -3079,6 +3085,9 @@ static struct sk_buff *validate_xmit_skb(struct sk_buff *skb, struct net_device 
 	skb = validate_xmit_vlan(skb, features);
 	if (unlikely(!skb))
 		goto out_null;
+
+	if (unlikely(!skb_mac_len_fits_dev(dev, skb)))
+		goto out_kfree_skb;
 
 	if (netif_needs_gso(skb, features)) {
 		struct sk_buff *segs;
