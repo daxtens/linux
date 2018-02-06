@@ -1842,8 +1842,33 @@ static inline bool skb_mac_len_fits_dev(const struct net_device *dev,
 	 * if TSO is enabled, we need to check the size of the
 	 * segmented packets
 	 */
-	if (skb_is_gso(skb))
-		return skb_gso_validate_mac_len(skb, len);
+	if (skb_is_gso(skb)) {
+		const struct skb_shared_info *shinfo = skb_shinfo(skb);
+		unsigned int hlen = 0;
+
+		if (unlikely(shinfo->gso_size == GSO_BY_FRAGS))
+			return skb_gso_validate_mac_len(skb, len);
+		
+		if (skb->encapsulation) {
+			hlen = skb_inner_transport_header(skb) -
+			       skb_transport_header(skb);
+			
+			if (likely(shinfo->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6)))
+				hlen += inner_tcp_hdrlen(skb);
+		} else if (likely(shinfo->gso_type & (SKB_GSO_TCPV4 | SKB_GSO_TCPV6))) {
+			hlen = tcp_hdrlen(skb);
+		} else if (unlikely(shinfo->gso_type & SKB_GSO_SCTP)) {
+			hlen = sizeof(struct sctphdr);
+		}
+		/* UFO sets gso_size to the size of the fragmentation
+		 * payload, i.e. the size of the L4 (UDP) header is already
+		 * accounted for.
+		 */
+		hlen += shinfo->gso_size;
+		hlen += skb_transport_header(skb) - skb_mac_header(skb);
+		
+		return (hlen <= len);
+	}
 
 	return false;
 }
