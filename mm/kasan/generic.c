@@ -170,6 +170,8 @@ static __always_inline void check_memory_region_inline(unsigned long addr,
 						size_t size, bool write,
 						unsigned long ret_ip)
 {
+	check_return_arch_not_ready();
+
 	if (unlikely(size == 0))
 		return;
 
