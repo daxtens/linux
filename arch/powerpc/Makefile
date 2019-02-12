@@ -427,6 +427,13 @@ else
 endif
 endif
 
+ifdef CONFIG_KASAN
+prepare: kasan_prepare
+
+kasan_prepare: prepare0
+       $(eval KASAN_SHADOW_OFFSET = $(shell awk '{if ($$2 == "KASAN_SHADOW_OFFSET") print $$3;}' include/generated/asm-offsets.h))
+endif
+
 # Check toolchain versions:
 # - gcc-4.6 is the minimum kernel-wide version so nothing required.
 checkbin:

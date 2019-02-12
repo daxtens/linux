@@ -783,5 +783,9 @@ int main(void)
 	DEFINE(VIRT_IMMR_BASE, (u64)__fix_to_virt(FIX_IMMR_BASE));
 #endif
 
+#ifdef CONFIG_KASAN
+	DEFINE(KASAN_SHADOW_OFFSET, KASAN_SHADOW_OFFSET);
+#endif
+
 	return 0;
 }
