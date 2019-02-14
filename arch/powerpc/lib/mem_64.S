@@ -30,7 +30,8 @@ EXPORT_SYMBOL(__memset16)
 EXPORT_SYMBOL(__memset32)
 EXPORT_SYMBOL(__memset64)
 
-_GLOBAL(memset)
+_GLOBAL(__memset)
+KASAN_OVERRIDE(memset, __memset)
 	neg	r0,r3
 	rlwimi	r4,r4,8,16,23
 	andi.	r0,r0,7			/* # bytes to be 8-byte aligned */
@@ -97,7 +98,8 @@ _GLOBAL(memset)
 	blr
 EXPORT_SYMBOL(memset)
 
-_GLOBAL_TOC(memmove)
+_GLOBAL_TOC(__memmove)
+KASAN_OVERRIDE(memmove, __memmove)
 	cmplw	0,r3,r4
 	bgt	backwards_memcpy
 	b	memcpy

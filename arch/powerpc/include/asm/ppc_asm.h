@@ -251,10 +251,17 @@ n:
 
 #define _GLOBAL_TOC(name) _GLOBAL(name)
 
+#endif /* 32-bit */
+
+/* KASAN helpers */
 #define KASAN_OVERRIDE(x, y) \
 	.weak x;	     \
 	.set x, y
 
+#ifdef CONFIG_KASAN
+#define EXPORT_SYMBOL_NOKASAN(x)
+#else
+#define EXPORT_SYMBOL_NOKASAN(x) EXPORT_SYMBOL(x)
 #endif
 
 /*

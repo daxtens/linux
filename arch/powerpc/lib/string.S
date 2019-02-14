@@ -16,7 +16,8 @@
 	
 /* This clears out any unused part of the destination buffer,
    just as the libc version does.  -- paulus */
-_GLOBAL(strncpy)
+_GLOBAL(__strncpy)
+KASAN_OVERRIDE(strncpy, __strncpy)
 	PPC_LCMPI 0,r5,0
 	beqlr
 	mtctr	r5
@@ -34,9 +35,10 @@ _GLOBAL(strncpy)
 2:	stbu	r0,1(r6)	/* clear it out if so */
 	bdnz	2b
 	blr
-EXPORT_SYMBOL(strncpy)
+EXPORT_SYMBOL_NOKASAN(strncpy)
 
-_GLOBAL(strncmp)
+_GLOBAL(__strncmp)
+KASAN_OVERRIDE(strncmp, __strncmp)
 	PPC_LCMPI 0,r5,0
 	beq-	2f
 	mtctr	r5
@@ -52,9 +54,10 @@ _GLOBAL(strncmp)
 	blr
 2:	li	r3,0
 	blr
-EXPORT_SYMBOL(strncmp)
+EXPORT_SYMBOL_NOKASAN(strncmp)
 
-_GLOBAL(memchr)
+_GLOBAL(__memchr)
+KASAN_OVERRIDE(memchr, __memchr)
 	PPC_LCMPI 0,r5,0
 	beq-	2f
 	mtctr	r5
@@ -66,4 +69,4 @@ _GLOBAL(memchr)
 	beqlr
 2:	li	r3,0
 	blr
-EXPORT_SYMBOL(memchr)
+EXPORT_SYMBOL_NOKASAN(memchr)

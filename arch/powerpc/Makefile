@@ -428,10 +428,12 @@ endif
 endif
 
 ifdef CONFIG_KASAN
+ifdef CONFIG_PPC32
 prepare: kasan_prepare
 
 kasan_prepare: prepare0
        $(eval KASAN_SHADOW_OFFSET = $(shell awk '{if ($$2 == "KASAN_SHADOW_OFFSET") print $$3;}' include/generated/asm-offsets.h))
+endif
 endif
 
 # Check toolchain versions:

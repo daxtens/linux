@@ -102,7 +102,8 @@
  * 2) src/dst has different offset to the 8 bytes boundary. The handlers
  * are named like .Ldiffoffset_xxxx
  */
-_GLOBAL_TOC(memcmp)
+_GLOBAL_TOC(__memcmp)
+KASAN_OVERRIDE(memcmp, __memcmp)
 	cmpdi	cr1,r5,0
 
 	/* Use the short loop if the src/dst addresses are not
@@ -630,4 +631,4 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
 	b	.Lcmp_lt32bytes
 
 #endif
-EXPORT_SYMBOL(memcmp)
+EXPORT_SYMBOL_NOKASAN(memcmp)
