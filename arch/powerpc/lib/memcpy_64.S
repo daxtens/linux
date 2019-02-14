@@ -19,7 +19,7 @@
 #endif
 
 	.align	7
-_GLOBAL_TOC_KASAN(memcpy)
+_GLOBAL_KASAN_TOC(memcpy)
 BEGIN_FTR_SECTION
 #ifdef __LITTLE_ENDIAN__
 	cmpdi	cr7,r5,0

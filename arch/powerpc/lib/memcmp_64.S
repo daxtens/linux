@@ -10,6 +10,7 @@
 #include <asm/ppc_asm.h>
 #include <asm/export.h>
 #include <asm/ppc-opcode.h>
+#include <asm/kasan.h>
 
 #define off8	r6
 #define off16	r7
@@ -102,7 +103,7 @@
  * 2) src/dst has different offset to the 8 bytes boundary. The handlers
  * are named like .Ldiffoffset_xxxx
  */
-_GLOBAL_TOC(memcmp)
+_GLOBAL_KASAN_TOC(memcmp)
 	cmpdi	cr1,r5,0
 
 	/* Use the short loop if the src/dst addresses are not
@@ -630,4 +631,4 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
 	b	.Lcmp_lt32bytes
 
 #endif
-EXPORT_SYMBOL(memcmp)
+EXPORT_SYMBOL_KASAN(memcmp)

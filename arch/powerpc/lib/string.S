@@ -11,12 +11,13 @@
 #include <asm/ppc_asm.h>
 #include <asm/export.h>
 #include <asm/cache.h>
+#include <asm/kasan.h>
 
 	.text
 	
 /* This clears out any unused part of the destination buffer,
    just as the libc version does.  -- paulus */
-_GLOBAL(strncpy)
+_GLOBAL_KASAN(strncpy)
 	PPC_LCMPI 0,r5,0
 	beqlr
 	mtctr	r5
@@ -34,9 +35,9 @@ _GLOBAL(strncpy)
 2:	stbu	r0,1(r6)	/* clear it out if so */
 	bdnz	2b
 	blr
-EXPORT_SYMBOL(strncpy)
+EXPORT_SYMBOL_KASAN(strncpy)
 
-_GLOBAL(strncmp)
+_GLOBAL_KASAN(strncmp)
 	PPC_LCMPI 0,r5,0
 	beq-	2f
 	mtctr	r5
@@ -52,9 +53,9 @@ _GLOBAL(strncmp)
 	blr
 2:	li	r3,0
 	blr
-EXPORT_SYMBOL(strncmp)
+EXPORT_SYMBOL_KASAN(strncmp)
 
-_GLOBAL(memchr)
+_GLOBAL_KASAN(memchr)
 	PPC_LCMPI 0,r5,0
 	beq-	2f
 	mtctr	r5
@@ -66,4 +67,4 @@ _GLOBAL(memchr)
 	beqlr
 2:	li	r3,0
 	blr
-EXPORT_SYMBOL(memchr)
+EXPORT_SYMBOL_KASAN(memchr)

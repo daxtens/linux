@@ -100,7 +100,7 @@ _GLOBAL_KASAN(memset)
 	blr
 EXPORT_SYMBOL_KASAN(memset)
 
-_GLOBAL_TOC_KASAN(memmove)
+_GLOBAL_KASAN_TOC(memmove)
 	cmplw	0,r3,r4
 	bgt	backwards_memcpy
 	b	memcpy
