@@ -3,9 +3,15 @@
 #define __ASM_KASAN_H
 
 #ifdef CONFIG_KASAN
+#ifdef CONFIG_PPC32
 #define _GLOBAL_KASAN(fn)	.weak fn ; _GLOBAL(__##fn) ; _GLOBAL(fn)
 #define _GLOBAL_TOC_KASAN(fn)	.weak fn ; _GLOBAL_TOC(__##fn) ; _GLOBAL_TOC(fn)
 #define EXPORT_SYMBOL_KASAN(fn)	EXPORT_SYMBOL(__##fn) ; EXPORT_SYMBOL(fn)
+#else
+#define _GLOBAL_KASAN(fn)	_GLOBAL(__##fn)
+#define _GLOBAL_TOC_KASAN(fn)	_GLOBAL_TOC(__##fn)
+#define EXPORT_SYMBOL_KASAN(fn)	EXPORT_SYMBOL(__##fn)
+#endif
 #else
 #define _GLOBAL_KASAN(fn)	_GLOBAL(fn)
 #define _GLOBAL_TOC_KASAN(fn)	_GLOBAL_TOC(fn)
@@ -15,6 +21,7 @@
 #ifndef __ASSEMBLY__
 
 #include <asm/page.h>
+#include <asm/pgtable.h>
 
 #define KASAN_SHADOW_SCALE_SHIFT	3
 

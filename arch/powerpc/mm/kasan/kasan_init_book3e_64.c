@@ -7,6 +7,22 @@
 #include <linux/memblock.h>
 #include <linux/sched/task.h>
 #include <asm/pgalloc.h>
+#include <linux/string.h>
+
+__weak void * memcpy(void * d, const void * s, __kernel_size_t c) {
+	return __memcpy(d, s, c);
+}
+EXPORT_SYMBOL(memcpy);
+
+__weak void * memmove(void * d, const void * s, __kernel_size_t c) {
+	return __memmove(d, s, c);
+}
+EXPORT_SYMBOL(memmove);
+
+__weak void *memset(void *addr, int c, size_t len) {
+	return __memset(addr, c, len);
+}
+EXPORT_SYMBOL(memset);
 
 DEFINE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
 EXPORT_SYMBOL(powerpc_kasan_enabled_key);
