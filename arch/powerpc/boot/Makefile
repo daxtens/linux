@@ -18,6 +18,9 @@
 #	CROSS32_COMPILE is setup as a prefix just like CROSS_COMPILE
 #	in the toplevel makefile.
 
+KCSAN_SANITIZE := n
+
+
 all: $(obj)/zImage
 
 ifdef CROSS32_COMPILE

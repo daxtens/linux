@@ -12,6 +12,8 @@
 # Rewritten by Cort Dougan and Paul Mackerras
 #
 
+KCSAN_SANITIZE := n
+
 HAS_BIARCH	:= $(call cc-option-yn, -m32)
 
 # Set default 32 bits cross compilers for vdso and boot wrapper

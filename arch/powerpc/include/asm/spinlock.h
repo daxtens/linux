@@ -41,13 +41,13 @@ static inline bool vcpu_is_preempted(int cpu)
 {
 	if (!firmware_has_feature(FW_FEATURE_SPLPAR))
 		return false;
-	return !!(be32_to_cpu(lppaca_of(cpu).yield_count) & 1);
+	return !!(be32_to_cpu(READ_ONCE(lppaca_of(cpu).yield_count)) & 1);
 }
 #endif
 
 static __always_inline int arch_spin_value_unlocked(arch_spinlock_t lock)
 {
-	return lock.slock == 0;
+	return READ_ONCE(lock.slock) == 0;
 }
 
 static inline int arch_spin_is_locked(arch_spinlock_t *lock)
@@ -110,7 +110,7 @@ extern void __rw_yield(arch_rwlock_t *lock);
 #define SHARED_PROCESSOR	0
 #endif
 
-static inline void arch_spin_lock(arch_spinlock_t *lock)
+static __no_kcsan_or_inline void arch_spin_lock(arch_spinlock_t *lock)
 {
 	while (1) {
 		if (likely(__arch_spin_trylock(lock) == 0))
@@ -124,7 +124,7 @@ static inline void arch_spin_lock(arch_spinlock_t *lock)
 	}
 }
 
-static inline
+static __no_kcsan_or_inline
 void arch_spin_lock_flags(arch_spinlock_t *lock, unsigned long flags)
 {
 	unsigned long flags_dis;
@@ -149,7 +149,7 @@ static inline void arch_spin_unlock(arch_spinlock_t *lock)
 {
 	__asm__ __volatile__("# arch_spin_unlock\n\t"
 				PPC_RELEASE_BARRIER: : :"memory");
-	lock->slock = 0;
+	WRITE_ONCE(lock->slock, 0);
 }
 
 /*
@@ -219,7 +219,7 @@ static inline long __arch_write_trylock(arch_rwlock_t *rw)
 	return tmp;
 }
 
-static inline void arch_read_lock(arch_rwlock_t *rw)
+static __no_kcsan_or_inline void arch_read_lock(arch_rwlock_t *rw)
 {
 	while (1) {
 		if (likely(__arch_read_trylock(rw) > 0))
@@ -233,7 +233,7 @@ static inline void arch_read_lock(arch_rwlock_t *rw)
 	}
 }
 
-static inline void arch_write_lock(arch_rwlock_t *rw)
+static __no_kcsan_or_inline void arch_write_lock(arch_rwlock_t *rw)
 {
 	while (1) {
 		if (likely(__arch_write_trylock(rw) == 0))
@@ -274,7 +274,7 @@ static inline void arch_read_unlock(arch_rwlock_t *rw)
 	: "cr0", "xer", "memory");
 }
 
-static inline void arch_write_unlock(arch_rwlock_t *rw)
+static __no_kcsan_or_inline void arch_write_unlock(arch_rwlock_t *rw)
 {
 	__asm__ __volatile__("# write_unlock\n\t"
 				PPC_RELEASE_BARRIER: : :"memory");

@@ -1,3 +1,5 @@
+KCSAN_SANITIZE := n
+
 # SPDX-License-Identifier: GPL-2.0
 #
 # Makefile for the linux kernel.
@@ -35,6 +37,8 @@ KASAN_SANITIZE_early_32.o := n
 KASAN_SANITIZE_cputable.o := n
 KASAN_SANITIZE_prom_init.o := n
 KASAN_SANITIZE_btext.o := n
+
+KCSAN_SANITIZE_prom_init.o := n
 
 ifdef CONFIG_KASAN
 CFLAGS_early_32.o += -DDISABLE_BRANCH_PROFILING
