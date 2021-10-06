@@ -35,3 +35,5 @@ obj-$(CONFIG_PPC_VAS)		+= vas.o
 # nothing that operates in real mode is safe for KASAN
 KASAN_SANITIZE_ras.o := n
 KASAN_SANITIZE_kexec.o := n
+#machine_kexec
+KASAN_SANITIZE_setup.o := n
