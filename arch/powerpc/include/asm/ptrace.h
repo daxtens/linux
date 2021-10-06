@@ -305,12 +305,6 @@ static inline void regs_set_recoverable(struct pt_regs *regs)
 		regs_set_return_msr(regs, regs->msr | MSR_RI);
 }
 
-static inline void regs_set_unrecoverable(struct pt_regs *regs)
-{
-	if (cpu_has_msr_ri())
-		regs_set_return_msr(regs, regs->msr & ~MSR_RI);
-}
-
 #define arch_has_single_step()	(1)
 #define arch_has_block_step()	(true)
 #define ARCH_HAS_USER_SINGLE_STEP_REPORT
